@@ -8,6 +8,7 @@ Lista de compras compartida entre los celulares de la casa y la tablet (vía el 
 - Tocar un producto lo marca como comprado (baja a "En el carrito"); tocarlo otra vez lo devuelve. ✕ lo borra. "Limpiar comprados" vacía el carrito.
 - Sugerencias al escribir (`<datalist>`) con lo que se ha agregado antes, los más frecuentes primero.
 - 🎤 Dictado (`../voz/voz.js`, modo lista): "dos leches, huevos y tortillas" agrega tres productos, cada uno con su cantidad. Si `voz.js` no carga, el botón no aparece y la fila vuelve a 3 columnas (`.agregar:has(.dictar:empty)`).
+- ✨ Después de dictar aparece una barra "¿Salió enredado? ✨ Ordenar con IA": manda el texto dictado a `../ia/api/ordenar-lista` (proyecto `casa/ia`, modelo local, 10–30 s) y cambia los productos que agregó ese dictado (solo los nuevos; los que se juntaron con uno ya pendiente se quedan) por los que devuelve la IA.
 - Otras tools agregan productos con `POST /api/items`: la cocina (ingredientes de una receta y lo que se acaba en la despensa).
 
 ## Cómo está hecho

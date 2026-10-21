@@ -146,20 +146,73 @@
       Voz.boton({
         modo: "lista",
         etiqueta: "Dictar productos",
-        alTerminar: async ({ items }) => {
-          if (!items || !items.length) {
+        alTerminar: async ({ texto, items: dictados }) => {
+          if (!dictados || !dictados.length) {
             mostrarError("No se entendió ningún producto. Intenta de nuevo.");
             return;
           }
-          for (const { nombre, cantidad } of items) {
+          const antes = new Set(items.map((i) => i.id));
+          for (const { nombre, cantidad } of dictados) {
             await cambiar("items", { method: "POST", body: JSON.stringify({ nombre, cantidad }) });
           }
           cargarSugerencias();
+          // Solo los productos nuevos: si un nombre ya estaba pendiente, el servidor lo juntó con el existente
+          ultimoDictado = { texto, ids: items.filter((i) => !antes.has(i.id)).map((i) => i.id) };
+          mostrarBarraIA(`Se agregaron ${dictados.length} ${dictados.length === 1 ? "producto" : "productos"}. ¿Salió enredado?`);
         },
         alError: (m) => mostrarError(m),
       })
     );
   }
+
+  // ✨ Ordenar con IA lo último que se dictó (servicio casa/ia, modelo local; tarda 10–30 s)
+  const IA = "../ia/api/";
+  let ultimoDictado = null;
+  let ocultarBarra = null;
+
+  function mostrarBarraIA(texto, conBoton = true) {
+    clearTimeout(ocultarBarra);
+    $("ia-barra-texto").textContent = texto;
+    $("ia-ordenar").hidden = !conBoton;
+    $("ia-ordenar").disabled = false;
+    $("ia-barra").hidden = false;
+    ocultarBarra = setTimeout(() => ($("ia-barra").hidden = true), conBoton ? 60000 : 5000);
+  }
+
+  $("ia-barra-cerrar").addEventListener("click", () => ($("ia-barra").hidden = true));
+
+  $("ia-ordenar").addEventListener("click", async () => {
+    if (!ultimoDictado) return;
+    const boton = $("ia-ordenar");
+    boton.disabled = true;
+    clearTimeout(ocultarBarra);
+    const inicio = Date.now();
+    const reloj = setInterval(() => {
+      $("ia-barra-texto").textContent = `Pensando… ${Math.round((Date.now() - inicio) / 1000)} s`;
+    }, 1000);
+    $("ia-barra-texto").textContent = "Pensando…";
+    try {
+      const r = await fetch(IA + "ordenar-lista", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: ultimoDictado.texto }),
+      });
+      const datos = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(datos.error || `Error ${r.status}`);
+      if (!datos.items.length) throw new Error("La IA no encontró productos en el dictado");
+      // Se cambian los productos que agregó el dictado por los que ordenó la IA
+      for (const id of ultimoDictado.ids) await cambiar(`items/${id}`, { method: "DELETE" });
+      for (const { nombre, cantidad } of datos.items) {
+        await cambiar("items", { method: "POST", body: JSON.stringify({ nombre, cantidad }) });
+      }
+      ultimoDictado = null;
+      mostrarBarraIA(`Ordenado con IA ✓ (${datos.items.length} ${datos.items.length === 1 ? "producto" : "productos"})`, false);
+    } catch (e) {
+      mostrarBarraIA(`⚠ ${e.message === "Failed to fetch" ? "No hay conexión con el servidor" : e.message}`);
+    } finally {
+      clearInterval(reloj);
+    }
+  });
 
   function alTocar(e) {
     const boton = e.target.closest("button[data-accion]");

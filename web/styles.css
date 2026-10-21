@@ -99,6 +99,24 @@ h1 { margin: 0; font-size: 1.8rem; }
 .agregar .dictar .voz-boton { width: 48px; height: 100%; padding: 0; border-radius: 14px; background: var(--acento-suave); color: var(--acento); }
 .agregar .dictar .voz-boton.grabando { background: #d93025; color: #fff; }
 
+.ia-barra {
+  display: flex;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 2px 0 10px;
+  padding: 10px 8px 10px 14px;
+  border-radius: 14px;
+  background: #efe6fb;
+  color: #3d2a66;
+  font-size: 0.95rem;
+}
+.ia-barra[hidden] { display: none; }
+.ia-barra span { flex: 1; min-width: 0; }
+.ia-ordenar, .ia-barra-cerrar { flex: none; }
+.ia-ordenar { padding: 8px 12px; border: none; border-radius: 10px; background: #6a3fb5; color: #fff; font-weight: 700; }
+.ia-ordenar:disabled { opacity: .6; }
+.ia-barra-cerrar { width: 36px; height: 36px; border: none; background: none; color: #3d2a66; }
+
 .error {
   margin: 4px 0 10px;
   padding: 10px 14px;
