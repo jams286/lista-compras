@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f7f1">
+  <title>Lista de compras</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="pagina">
+    <header class="cabecera">
+      <h1>Lista de compras</h1>
+      <span class="estado" id="estado" data-estado="cargando">Cargando…</span>
+    </header>
+
+    <form class="agregar" id="agregar" autocomplete="off">
+      <label class="visualmente-oculto" for="nombre">Producto</label>
+      <input type="text" id="nombre" list="sugerencias" maxlength="60" placeholder="¿Qué hace falta?" enterkeyhint="done">
+      <label class="visualmente-oculto" for="cantidad">Cantidad</label>
+      <input type="text" id="cantidad" maxlength="20" placeholder="Cant." inputmode="text">
+      <button type="submit" aria-label="Agregar">+</button>
+      <datalist id="sugerencias"></datalist>
+    </form>
+
+    <p class="error" id="error" hidden></p>
+
+    <section aria-labelledby="titulo-pendientes">
+      <h2 id="titulo-pendientes" class="visualmente-oculto">Por comprar</h2>
+      <p class="vacio" id="vacio" hidden>No falta nada. 🎉</p>
+      <ul class="items" id="pendientes"></ul>
+    </section>
+
+    <section class="carrito" id="carrito" hidden aria-labelledby="titulo-carrito">
+      <div class="carrito-cabeza">
+        <h2 id="titulo-carrito">En el carrito <span id="cuenta-carrito"></span></h2>
+        <button type="button" class="enlace" id="limpiar">Limpiar comprados</button>
+      </div>
+      <ul class="items" id="comprados"></ul>
+    </section>
+  </main>
+
+  <template id="plantilla">
+    <li class="item">
+      <button type="button" class="item-marcar" data-accion="marcar">
+        <span class="item-check" aria-hidden="true"></span>
+        <span class="item-nombre"></span>
+        <span class="item-cantidad"></span>
+      </button>
+      <button type="button" class="item-borrar" data-accion="borrar">✕</button>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

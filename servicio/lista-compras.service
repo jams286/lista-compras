@@ -1,0 +1,12 @@
+[Unit]
+Description=Lista de compras de la casa (API JSON + SQLite)
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/proyectos/casa/lista-compras
+ExecStart=/usr/bin/python3 servidor.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

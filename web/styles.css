@@ -1,0 +1,201 @@
+:root {
+  --fondo: #f3f7f1;
+  --superficie: #ffffff;
+  --tinta: #1f2a1f;
+  --tinta-suave: #637063;
+  --linea: #dde6da;
+  --acento: #2f8f4e;
+  --acento-suave: #e2f1e6;
+  --error: #c62828;
+  --fuente: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--fuente);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+.visualmente-oculto {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.pagina {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+h1 { margin: 0; font-size: 1.8rem; }
+
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+}
+.estado::before {
+  content: "";
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--tinta-suave);
+}
+.estado[data-estado="ok"]::before { background: var(--acento); }
+.estado[data-estado="error"] { color: var(--error); }
+.estado[data-estado="error"]::before { background: var(--error); }
+
+/* ---------- Agregar ---------- */
+
+.agregar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px 52px;
+  gap: 8px;
+  padding: 10px 0;
+  background: var(--fondo);
+}
+
+.agregar input {
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid var(--linea);
+  border-radius: 14px;
+  background: var(--superficie);
+  font-size: 1.05rem;
+}
+.agregar input:focus { outline: 2px solid var(--acento); outline-offset: 1px; }
+
+.agregar button {
+  border: none;
+  border-radius: 14px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.error {
+  margin: 4px 0 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fdecea;
+  color: var(--error);
+  font-weight: 700;
+}
+
+.vacio { margin: 28px 0; text-align: center; color: var(--tinta-suave); font-size: 1.1rem; }
+
+/* ---------- Items ---------- */
+
+.items {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: stretch;
+  border-radius: 14px;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  overflow: hidden;
+}
+
+.item-marcar {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px 14px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.item-check {
+  flex: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--linea);
+  display: grid;
+  place-items: center;
+}
+
+.item-nombre { flex: 1; min-width: 0; font-size: 1.1rem; overflow-wrap: anywhere; }
+
+.item-cantidad {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--acento-suave);
+  color: var(--acento);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.item-cantidad:empty { display: none; }
+
+.item-borrar {
+  flex: none;
+  width: 48px;
+  border: none;
+  background: none;
+  color: var(--tinta-suave);
+  font-size: 1.05rem;
+}
+
+/* Comprados */
+.item.comprado { background: transparent; }
+.item.comprado .item-nombre { text-decoration: line-through; color: var(--tinta-suave); }
+.item.comprado .item-check { background: var(--acento); border-color: var(--acento); }
+.item.comprado .item-check::after {
+  content: "";
+  width: 6px; height: 11px;
+  margin-top: -2px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+.item.comprado .item-cantidad { background: var(--linea); color: var(--tinta-suave); }
+
+.carrito { margin-top: 28px; }
+.carrito-cabeza {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.carrito h2 { margin: 0; font-size: 1.05rem; color: var(--tinta-suave); }
+
+.enlace {
+  padding: 6px 0;
+  border: none;
+  background: none;
+  color: var(--error);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
