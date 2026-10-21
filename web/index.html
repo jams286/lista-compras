@@ -23,6 +23,7 @@
       <input type="text" id="nombre" list="sugerencias" maxlength="60" placeholder="¿Qué hace falta?" enterkeyhint="done">
       <label class="visualmente-oculto" for="cantidad">Cantidad</label>
       <input type="text" id="cantidad" maxlength="20" placeholder="Cant." inputmode="text">
+      <span class="dictar" id="dictar"></span>
       <button type="submit" aria-label="Agregar">+</button>
       <datalist id="sugerencias"></datalist>
     </form>
@@ -55,6 +56,7 @@
     </li>
   </template>
 
+  <script src="../voz/voz.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

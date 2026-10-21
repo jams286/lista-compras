@@ -68,7 +68,7 @@ h1 { margin: 0; font-size: 1.8rem; }
   top: 0;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 76px 52px;
+  grid-template-columns: minmax(0, 1fr) 76px auto 52px;
   gap: 8px;
   padding: 10px 0;
   background: var(--fondo);
@@ -93,6 +93,11 @@ h1 { margin: 0; font-size: 1.8rem; }
   font-weight: 700;
   line-height: 1;
 }
+
+.dictar:empty { display: none; }
+.agregar:has(.dictar:empty) { grid-template-columns: minmax(0, 1fr) 76px 52px; }
+.agregar .dictar .voz-boton { width: 48px; height: 100%; padding: 0; border-radius: 14px; background: var(--acento-suave); color: var(--acento); }
+.agregar .dictar .voz-boton.grabando { background: #d93025; color: #fff; }
 
 .error {
   margin: 4px 0 10px;

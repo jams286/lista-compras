@@ -7,6 +7,8 @@ Lista de compras compartida entre los celulares de la casa y la tablet (vía el 
 - Agregar producto con cantidad opcional (texto libre: "2", "1 paquete"). Si ya está pendiente con el mismo nombre, solo se actualiza la cantidad.
 - Tocar un producto lo marca como comprado (baja a "En el carrito"); tocarlo otra vez lo devuelve. ✕ lo borra. "Limpiar comprados" vacía el carrito.
 - Sugerencias al escribir (`<datalist>`) con lo que se ha agregado antes, los más frecuentes primero.
+- 🎤 Dictado (`../voz/voz.js`, modo lista): "dos leches, huevos y tortillas" agrega tres productos, cada uno con su cantidad. Si `voz.js` no carga, el botón no aparece y la fila vuelve a 3 columnas (`.agregar:has(.dictar:empty)`).
+- Otras tools agregan productos con `POST /api/items`: la cocina (ingredientes de una receta y lo que se acaba en la despensa).
 
 ## Cómo está hecho
 

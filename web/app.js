@@ -140,6 +140,27 @@
     cargarSugerencias();
   });
 
+  // 🎤 dictar varios productos de una vez: "dos leches, huevos y tortillas"
+  if (window.Voz) {
+    $("dictar").append(
+      Voz.boton({
+        modo: "lista",
+        etiqueta: "Dictar productos",
+        alTerminar: async ({ items }) => {
+          if (!items || !items.length) {
+            mostrarError("No se entendió ningún producto. Intenta de nuevo.");
+            return;
+          }
+          for (const { nombre, cantidad } of items) {
+            await cambiar("items", { method: "POST", body: JSON.stringify({ nombre, cantidad }) });
+          }
+          cargarSugerencias();
+        },
+        alError: (m) => mostrarError(m),
+      })
+    );
+  }
+
   function alTocar(e) {
     const boton = e.target.closest("button[data-accion]");
     if (!boton) return;
