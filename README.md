@@ -2,7 +2,7 @@
 
 Lista de compras compartida de la casa: todos agregan desde su celular y quien va al súper ve la lista completa. Los cambios llegan a los demás en unos segundos.
 
-- Página: http://192.168.1.4/lista-compras/
+- Página: https://192.168.1.4/lista-compras/
 - Datos: `~/.local/share/casa/lista-compras.db` (SQLite)
 
 ## Partes

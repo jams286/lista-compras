@@ -1,5 +1,7 @@
 # lista-compras (casa)
 
+Tracker: lista-compras
+
 Lista de compras compartida entre los celulares de la casa y la tablet (vía el hub `infra/home`).
 
 ## Qué hace
@@ -21,7 +23,7 @@ Lista de compras compartida entre los celulares de la casa y la tablet (vía el 
 
 ## Dónde corre
 
-- Página: http://192.168.1.4/lista-compras/ (archivos en `/var/www/lista-compras/`, copiados de `web/`).
+- Página: https://192.168.1.4/lista-compras/ (archivos en `/var/www/lista-compras/`, copiados de `web/`).
 - API: nginx publica `/lista-compras/api/` → `127.0.0.1:8770/api/` (config en `infra/nginx`).
 - Servicio systemd de usuario `lista-compras.service` (copia en `servicio/`; linger activo, arranca sin sesión iniciada).
 - Comandos de publicación, servicio y respaldo en el README.
