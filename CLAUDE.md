@@ -35,4 +35,4 @@ Lista de compras compartida entre los celulares de la casa y la tablet (vía el 
 ## Pruebas
 
 - `python3 -m unittest -v` (`test_servidor.py`, BD temporal): clave, suma de cantidades, secciones, edición y migración.
-- UI: Playwright (venv de `personal/rm-ecommerce`) contra servidores de prueba con `LISTA_BD`/`LISTA_PUERTO` y un proxy que imite a nginx. El puerto 18770 lo ocupa un servidor de prueba viejo (31 oct); usar otro.
+- UI: Playwright (venv de `personal/rm-ecommerce`) contra servidores de prueba con `LISTA_BD`/`LISTA_PUERTO` y un proxy que imite a nginx.
