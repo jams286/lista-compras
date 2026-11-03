@@ -24,7 +24,7 @@
       <label class="visualmente-oculto" for="nombre">Producto</label>
       <input type="text" id="nombre" list="sugerencias" maxlength="60" placeholder="¿Qué hace falta?" enterkeyhint="done">
       <label class="visualmente-oculto" for="cantidad">Cantidad</label>
-      <input type="text" id="cantidad" maxlength="20" placeholder="Cant." inputmode="text">
+      <input type="text" id="cantidad" maxlength="40" placeholder="Cant." inputmode="text">
       <span class="dictar" id="dictar"></span>
       <button type="submit" aria-label="Agregar">+</button>
       <datalist id="sugerencias"></datalist>
@@ -41,7 +41,7 @@
     <section aria-labelledby="titulo-pendientes">
       <h2 id="titulo-pendientes" class="visualmente-oculto">Por comprar</h2>
       <p class="vacio" id="vacio" hidden>No falta nada. 🎉</p>
-      <ul class="items" id="pendientes"></ul>
+      <div id="pendientes"></div>
     </section>
 
     <section class="carrito" id="carrito" hidden aria-labelledby="titulo-carrito">
@@ -60,9 +60,29 @@
         <span class="item-nombre"></span>
         <span class="item-cantidad"></span>
       </button>
+      <button type="button" class="item-editar" data-accion="editar">✎</button>
       <button type="button" class="item-borrar" data-accion="borrar">✕</button>
     </li>
   </template>
+
+  <dialog class="hoja" id="editor" aria-labelledby="editor-titulo">
+    <form method="dialog" id="editor-form" autocomplete="off">
+      <h2 id="editor-titulo">Editar producto</h2>
+      <label>Producto
+        <input type="text" id="editor-nombre" maxlength="60" required>
+      </label>
+      <label>Cantidad
+        <input type="text" id="editor-cantidad" maxlength="40" placeholder="Ej. 2, 1 kg, 1 paquete">
+      </label>
+      <label>Sección
+        <select id="editor-seccion"></select>
+      </label>
+      <div class="hoja-botones">
+        <button type="button" class="secundario" id="editor-cancelar">Cancelar</button>
+        <button type="submit" class="primario" value="guardar">Guardar</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="../voz/voz.js"></script>
   <script src="app.js"></script>

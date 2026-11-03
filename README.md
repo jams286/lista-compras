@@ -1,6 +1,6 @@
 # lista-compras
 
-Lista de compras compartida de la casa: todos agregan desde su celular y quien va al súper ve la lista completa. Los cambios llegan a los demás en unos segundos.
+Lista de compras compartida de la casa: todos agregan desde su celular y quien va al súper ve la lista completa. Los cambios llegan a los demás en unos segundos. Los productos repetidos se suman y la lista se agrupa por sección del súper.
 
 - Página: https://192.168.1.4/lista-compras/
 - Datos: `~/.local/share/casa/lista-compras.db` (SQLite)
@@ -10,6 +10,7 @@ Lista de compras compartida de la casa: todos agregan desde su celular y quien v
 - `web/`: página estática que se publica en `/var/www/lista-compras/`.
 - `servidor.py`: API JSON (solo Python estándar + SQLite) en `127.0.0.1:8770`. nginx publica `/lista-compras/api/` → `/api/`.
 - `servicio/lista-compras.service`: servicio systemd de usuario.
+- `test_servidor.py`: pruebas (`python3 -m unittest -v`).
 
 ## Comandos
 

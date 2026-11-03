@@ -20,7 +20,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button, input { font: inherit; color: inherit; }
+button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
 .visualmente-oculto {
@@ -181,9 +181,9 @@ h1 { margin: 0; font-size: 1.8rem; }
 }
 .item-cantidad:empty { display: none; }
 
-.item-borrar {
+.item-borrar, .item-editar {
   flex: none;
-  width: 48px;
+  width: 44px;
   border: none;
   background: none;
   color: var(--tinta-suave);
@@ -222,3 +222,50 @@ h1 { margin: 0; font-size: 1.8rem; }
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.item-editar { font-size: 1.15rem; }
+.item.comprado .item-editar { display: none; }
+
+/* ---------- Secciones ---------- */
+
+.grupo + .grupo { margin-top: 16px; }
+.grupo-titulo {
+  margin: 0 0 2px 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--tinta-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Hoja de edición ---------- */
+
+.hoja {
+  width: min(100% - 24px, 480px);
+  margin: auto auto 12px;
+  padding: 0;
+  border: none;
+  border-radius: 20px;
+  background: var(--superficie);
+  color: var(--tinta);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+.hoja::backdrop { background: rgba(20, 30, 20, 0.45); }
+.hoja form { display: grid; gap: 14px; padding: 20px; }
+.hoja h2 { margin: 0; font-size: 1.25rem; }
+.hoja label { display: grid; gap: 6px; font-weight: 700; color: var(--tinta-suave); font-size: 0.95rem; }
+.hoja input, .hoja select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  background: var(--superficie);
+  color: var(--tinta);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+.hoja input:focus, .hoja select:focus { outline: 2px solid var(--acento); outline-offset: 1px; }
+.hoja-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.hoja-botones button { padding: 13px; border-radius: 12px; font-weight: 700; border: none; }
+.primario { background: var(--acento); color: #fff; }
+.secundario { background: var(--acento-suave); color: var(--acento); }

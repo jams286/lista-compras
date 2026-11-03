@@ -14,6 +14,9 @@
 
   let items = [];
   let version = -1;
+  // Orden en que se recorre el súper; se pide al servidor (este es el respaldo si no responde)
+  let secciones = ["Frutas y verduras", "Carnes", "Lácteos y huevos", "Panadería", "Abarrotes", "Especias",
+    "Bebidas", "Congelados", "Limpieza", "Higiene", "Otros"].map((nombre) => ({ nombre, icono: "" }));
   let ocupado = 0; // pedidos de cambio en curso; mientras haya, no se pisa la pantalla con la revisión
 
   // ---------- API ----------
@@ -94,13 +97,37 @@
       `${item.nombre}${item.cantidad ? ", " + item.cantidad : ""}: ${item.comprado ? "devolver a la lista" : "marcar como comprado"}`
     );
     li.querySelector(".item-borrar").setAttribute("aria-label", `Borrar ${item.nombre}`);
+    li.querySelector(".item-editar").setAttribute("aria-label", `Editar ${item.nombre}`);
     return li;
+  }
+
+  // Pendientes agrupados por sección, en el orden en que se recorre el súper
+  function grupos(pendientes) {
+    const orden = secciones.map((s) => s.nombre);
+    const porSeccion = new Map();
+    for (const item of pendientes) {
+      const s = orden.includes(item.seccion) ? item.seccion : "Otros";
+      if (!porSeccion.has(s)) porSeccion.set(s, []);
+      porSeccion.get(s).push(item);
+    }
+    return secciones.filter((s) => porSeccion.has(s.nombre)).map((s) => {
+      const grupo = document.createElement("section");
+      grupo.className = "grupo";
+      const titulo = document.createElement("h3");
+      titulo.className = "grupo-titulo";
+      titulo.textContent = `${s.icono} ${s.nombre}`.trim();
+      const ul = document.createElement("ul");
+      ul.className = "items";
+      ul.replaceChildren(...porSeccion.get(s.nombre).map(crearFila));
+      grupo.append(titulo, ul);
+      return grupo;
+    });
   }
 
   function dibujar() {
     const pendientes = items.filter((i) => !i.comprado);
     const comprados = items.filter((i) => i.comprado);
-    listaPendientes.replaceChildren(...pendientes.map(crearFila));
+    listaPendientes.replaceChildren(...grupos(pendientes));
     listaComprados.replaceChildren(...comprados.map(crearFila));
     $("vacio").hidden = pendientes.length > 0;
     $("carrito").hidden = comprados.length === 0;
@@ -151,13 +178,18 @@
             mostrarError("No se entendió ningún producto. Intenta de nuevo.");
             return;
           }
-          const antes = new Set(items.map((i) => i.id));
+          const antes = new Map(items.map((i) => [i.id, i.cantidad]));
           for (const { nombre, cantidad } of dictados) {
             await cambiar("items", { method: "POST", body: JSON.stringify({ nombre, cantidad }) });
           }
           cargarSugerencias();
           // Solo los productos nuevos: si un nombre ya estaba pendiente, el servidor lo juntó con el existente
-          ultimoDictado = { texto, ids: items.filter((i) => !antes.has(i.id)).map((i) => i.id) };
+          // Lo que se juntó con un producto que ya estaba sumó su cantidad: se guarda la de antes para deshacerlo
+          ultimoDictado = {
+            texto,
+            ids: items.filter((i) => !antes.has(i.id)).map((i) => i.id),
+            sumados: items.filter((i) => antes.has(i.id) && antes.get(i.id) !== i.cantidad).map((i) => ({ id: i.id, cantidad: antes.get(i.id) })),
+          };
           mostrarBarraIA(`Se agregaron ${dictados.length} ${dictados.length === 1 ? "producto" : "productos"}. ¿Salió enredado?`);
         },
         alError: (m) => mostrarError(m),
@@ -202,6 +234,9 @@
       if (!datos.items.length) throw new Error("La IA no encontró productos en el dictado");
       // Se cambian los productos que agregó el dictado por los que ordenó la IA
       for (const id of ultimoDictado.ids) await cambiar(`items/${id}`, { method: "DELETE" });
+      for (const { id, cantidad } of ultimoDictado.sumados) {
+        await cambiar(`items/${id}`, { method: "PATCH", body: JSON.stringify({ cantidad }) });
+      }
       for (const { nombre, cantidad } of datos.items) {
         await cambiar("items", { method: "POST", body: JSON.stringify({ nombre, cantidad }) });
       }
@@ -226,6 +261,8 @@
       cambiar(`items/${id}`, { method: "PATCH", body: JSON.stringify({ comprado }) }, () => {
         item.comprado = comprado;
       });
+    } else if (boton.dataset.accion === "editar") {
+      abrirEditor(item);
     } else if (boton.dataset.accion === "borrar") {
       cambiar(`items/${id}`, { method: "DELETE" }, () => {
         items = items.filter((i) => i.id !== id);
@@ -234,6 +271,60 @@
   }
   listaPendientes.addEventListener("click", alTocar);
   listaComprados.addEventListener("click", alTocar);
+
+  // ✎ Editar nombre, cantidad y sección (la sección elegida se recuerda para ese producto)
+  const editor = $("editor");
+  let editando = null;
+
+  function abrirEditor(item) {
+    editando = item.id;
+    $("editor-nombre").value = item.nombre;
+    $("editor-cantidad").value = item.cantidad;
+    $("editor-seccion").replaceChildren(
+      ...secciones.map((s) => {
+        const op = document.createElement("option");
+        op.value = s.nombre;
+        op.textContent = `${s.icono} ${s.nombre}`.trim();
+        return op;
+      })
+    );
+    $("editor-seccion").value = item.seccion || "Otros";
+    editor.showModal();
+    $("editor-cantidad").focus();
+  }
+
+  $("editor-cancelar").addEventListener("click", () => editor.close());
+  editor.addEventListener("click", (e) => {
+    if (e.target === editor) editor.close(); // tocar fuera de la hoja la cierra
+  });
+  $("editor-form").addEventListener("submit", (e) => {
+    const nombre = $("editor-nombre").value.trim();
+    if (!nombre) {
+      e.preventDefault();
+      $("editor-nombre").focus();
+      return;
+    }
+    const cantidad = $("editor-cantidad").value.trim();
+    const seccion = $("editor-seccion").value;
+    const id = editando;
+    const item = items.find((i) => i.id === id);
+    if (!item) return;
+    const cambios = {};
+    if (nombre !== item.nombre) cambios.nombre = nombre;
+    if (cantidad !== item.cantidad) cambios.cantidad = cantidad;
+    if (seccion !== item.seccion) cambios.seccion = seccion;
+    if (!Object.keys(cambios).length) return;
+    cambiar(`items/${id}`, { method: "PATCH", body: JSON.stringify(cambios) }, () => Object.assign(item, cambios));
+  });
+
+  async function cargarSecciones() {
+    try {
+      secciones = (await pedir("secciones")).secciones;
+      dibujar();
+    } catch {
+      /* se queda con las de respaldo */
+    }
+  }
 
   $("limpiar").addEventListener("click", () => {
     if (!confirm("¿Quitar de la lista todo lo que ya está en el carrito?")) return;
@@ -257,4 +348,5 @@
 
   arrancar();
   cargarSugerencias();
+  cargarSecciones();
 })();
